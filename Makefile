@@ -19,7 +19,7 @@
 #
 
 KERNEL := $(KERNELRELEASE)
-HEADERS := /usr/src/linux-headers-$(KERNEL)/include
+HEADERS := $(shell vmware-modconfig --console --get-kernel-headers -k $(KERNEL))
 GCC := $(shell vmware-modconfig --console --get-gcc)
 DEST := /lib/modules/$(KERNEL)/vmware
 
