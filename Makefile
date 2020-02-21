@@ -19,11 +19,11 @@
 #
 
 KERNEL := $(KERNELRELEASE)
-HEADERS := /usr/src/linux-$(KERNEL)/include
+HEADERS := $(shell vmware-modconfig --console --get-kernel-headers -k $(KERNEL))
 GCC := $(shell vmware-modconfig --console --get-gcc)
 DEST := /lib/modules/$(KERNEL)/vmware
 
-TARGETS := vmmon vmnet vmblock vmci vsock
+TARGETS := vmmon vmnet
 
 LOCAL_MODULES := $(addsuffix .ko, $(TARGETS))
 
@@ -33,10 +33,7 @@ all: $(LOCAL_MODULES)
 	rm -rf $(DEST)
 	depmod
 
-/usr/src/linux-$(KERNEL)/include/linux/version.h:
-	ln -s /usr/src/linux-$(KERNEL)/include/generated/uapi/linux/version.h /usr/src/linux-$(KERNEL)/include/linux/version.h
-
-%.ko: /usr/src/linux-$(KERNEL)/include/linux/version.h
+%.ko:
 	vmware-modconfig --console --build-mod -k $(KERNEL) $* $(GCC) $(HEADERS) vmware/
 	cp -f $(DEST)/$*.ko .
 
